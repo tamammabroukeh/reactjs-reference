@@ -36,7 +36,7 @@ function Register() {
           />
         </FormControl>
 
-        <FormControl siz sx={{ display: "flex", flexDirection: "column" }}>
+        <FormControl sx={{ display: "flex", flexDirection: "column" }}>
           <label>Last name</label>
           <OutlinedInput
             type="text"
