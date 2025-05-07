@@ -10,50 +10,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-interface PasswordRule {
-  id: string;
-  label: string;
-  validator: (value: string) => boolean;
-}
-
-interface PasswordFieldProps {
-  label: string;
-  name: string;
-  placeholder?: string;
-  className?: string;
-  showStrengthIndicator?: boolean;
-  required?: boolean;
-  rules?: PasswordRule[];
-}
-
-const DEFAULT_RULES: PasswordRule[] = [
-  {
-    id: "length",
-    label: "At least 8 characters",
-    validator: (value) => value.length >= 8,
-  },
-  {
-    id: "lowercase",
-    label: "At least one lowercase letter",
-    validator: (value) => /[a-z]/.test(value),
-  },
-  {
-    id: "uppercase",
-    label: "At least one uppercase letter",
-    validator: (value) => /[A-Z]/.test(value),
-  },
-  {
-    id: "number",
-    label: "At least one number",
-    validator: (value) => /\d/.test(value),
-  },
-  {
-    id: "special",
-    label: "At least one special character",
-    validator: (value) => /[!@#$%^&*(),.?":{}|<>]/.test(value),
-  },
-];
+import { DEFAULT_RULES } from "@/data";
+import { PasswordFieldProps } from "@/interfaces/shared";
 
 const PasswordField = ({
   label,

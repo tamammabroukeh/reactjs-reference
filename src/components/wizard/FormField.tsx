@@ -2,15 +2,7 @@ import { useField } from "formik";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormMessage } from "@/components/ui/form";
-
-interface FormFieldProps {
-  label: string;
-  name: string;
-  type?: string;
-  placeholder?: string;
-  className?: string;
-  required?: boolean;
-}
+import { FormFieldProps } from "@/interfaces/shared";
 
 const FormField = ({
   label,

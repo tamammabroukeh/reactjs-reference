@@ -1,26 +1,7 @@
 import React, { useState, ReactElement, isValidElement, Children } from "react";
 import { Check, ChevronRight, Circle } from "@mui/icons-material";
 import { Button } from "./ui/button";
-interface Step {
-  id: string;
-  label: string;
-  icon?: React.ReactNode;
-}
-interface StepChildProps {
-  isActive?: boolean;
-  updateFormData?: (data: Record<string, any>) => void;
-  formData?: Record<string, any>;
-  children?: React.ReactNode;
-}
-interface StepFormProps {
-  steps: Step[];
-  initialStep?: number;
-  activeColor?: string;
-  completedColor?: string;
-  inactiveColor?: string;
-  children: React.ReactNode[];
-  onSubmit: () => void;
-}
+
 
 export const MultiStepForm = ({
   steps,
