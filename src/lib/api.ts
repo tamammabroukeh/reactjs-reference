@@ -91,3 +91,49 @@ export async function updateTicketStatus(
     throw error;
   }
 }
+
+
+
+
+import axios from 'axios';
+import { User } from '@/types/community-types';
+
+// Mock API base URL - replace with your actual API
+const API_BASE_URL = 'https://jsonplaceholder.typicode.com';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+// Mock function to search users - replace with your actual API endpoint
+export const searchUsers = async (query: string): Promise<User[]> => {
+  try {
+    // This is a mock implementation using JSONPlaceholder
+    // Replace this with your actual user search API
+    const response = await api.get('/users');
+    const users = response.data;
+    
+    // Convert the mock data to our User interface and filter by query
+    const mockUsers: User[] = users.map((user: any) => ({
+      id: user.id.toString(),
+      username: user.username.toLowerCase(),
+      name: user.name,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`,
+    }));
+
+    // Filter users based on the search query
+    return mockUsers.filter(user => 
+      user.username.toLowerCase().includes(query.toLowerCase()) ||
+      user.name.toLowerCase().includes(query.toLowerCase())
+    );
+  } catch (error) {
+    console.error('Error searching users:', error);
+    return [];
+  }
+};
+
+// Mock function to get posts - you can replace this with your actual API
+export const getPosts = async () => {
+  // This would be replaced with your actual posts API
+  return [];
+};
