@@ -1,0 +1,42 @@
+export interface ImageFile {
+  id: string;
+  file: File;
+  url: string;
+  name: string;
+  size: number;
+  type: string;
+  aspectRatio?: number;
+  cropData?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+}
+
+export interface AspectRatio {
+  label: string;
+  value: number;
+  description: string;
+}
+
+export const ASPECT_RATIOS: AspectRatio[] = [
+  { label: "Original", value: 0, description: "Keep original ratio" },
+  { label: "1:1", value: 1, description: "Square" },
+  { label: "4:3", value: 4/3, description: "Standard" },
+  { label: "16:9", value: 16/9, description: "Widescreen" },
+  { label: "3:2", value: 3/2, description: "Photography" },
+  { label: "2:3", value: 2/3, description: "Portrait" },
+  { label: "9:16", value: 9/16, description: "Vertical" }
+];
+
+export interface CropState {
+  isActive: boolean;
+  imageId: string | null;
+  crop: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+}

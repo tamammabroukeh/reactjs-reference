@@ -1,0 +1,136 @@
+import React, { useState, useRef } from 'react';
+import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
+import { motion } from 'framer-motion';
+import { Check, X, RotateCcw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ImageFile } from '@/types/gallery';
+import 'react-image-crop/dist/ReactCrop.css';
+
+interface CropToolProps {
+  image: ImageFile;
+  onComplete: (cropData: PixelCrop) => void;
+  onCancel: () => void;
+}
+
+export const CropTool: React.FC<CropToolProps> = ({
+  image,
+  onComplete,
+  onCancel
+}) => {
+  const [crop, setCrop] = useState<Crop>({
+    unit: '%',
+    width: 80,
+    height: 80,
+    x: 10,
+    y: 10
+  });
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const { width, height } = e.currentTarget;
+    
+    // Create a centered crop
+    const newCrop = centerCrop(
+      makeAspectCrop(
+        {
+          unit: '%',
+          width: 80,
+        },
+        1,
+        width,
+        height
+      ),
+      width,
+      height
+    );
+    setCrop(newCrop);
+  };
+
+  const handleComplete = () => {
+    if (completedCrop) {
+      onComplete(completedCrop);
+    }
+  };
+
+  const handleReset = () => {
+    if (imgRef.current) {
+      const { width, height } = imgRef.current;
+      const newCrop = centerCrop(
+        makeAspectCrop(
+          {
+            unit: '%',
+            width: 80,
+          },
+          1,
+          width,
+          height
+        ),
+        width,
+        height
+      );
+      setCrop(newCrop);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col h-full bg-gallery-bg"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-border/20">
+        <h3 className="text-lg font-medium text-foreground">Crop Image</h3>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" size="sm" onClick={handleReset}>
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Reset
+          </Button>
+        </div>
+      </div>
+
+      {/* Crop Area */}
+      <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
+        <div className="max-w-full max-h-full">
+          <ReactCrop
+            crop={crop}
+            onChange={(_, percentCrop) => setCrop(percentCrop)}
+            onComplete={(c) => setCompletedCrop(c)}
+            aspect={undefined}
+            className="max-w-full max-h-full"
+          >
+            <img
+              ref={imgRef}
+              src={image.url}
+              alt={image.name}
+              onLoad={onImageLoad}
+              className="max-w-full max-h-full object-contain"
+            />
+          </ReactCrop>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center justify-center space-x-4 p-4 border-t border-border/20">
+        <Button
+          variant="outline"
+          onClick={onCancel}
+          className="min-w-[100px]"
+        >
+          <X className="h-4 w-4 mr-2" />
+          Cancel
+        </Button>
+        <Button
+          onClick={handleComplete}
+          disabled={!completedCrop}
+          className="min-w-[100px] bg-gradient-primary hover:shadow-glow"
+        >
+          <Check className="h-4 w-4 mr-2" />
+          Done
+        </Button>
+      </div>
+    </motion.div>
+  );
+};

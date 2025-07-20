@@ -1,0 +1,188 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Thumbs } from 'swiper/modules';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  horizontalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Plus, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ImageFile } from '@/types/gallery';
+import { cn } from '@/lib/utils';
+
+interface SortableImageProps {
+  image: ImageFile;
+  isActive: boolean;
+  onImageClick: () => void;
+  onDelete: () => void;
+}
+
+const SortableImage: React.FC<SortableImageProps> = ({
+  image,
+  isActive,
+  onImageClick,
+  onDelete
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: image.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={cn(
+        "relative group cursor-pointer transition-all duration-300",
+        isDragging && "z-50 opacity-80 scale-105"
+      )}
+    >
+      <motion.div
+        className={cn(
+          "relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300",
+          isActive
+            ? "border-primary shadow-glow"
+            : "border-border/30 hover:border-primary/50"
+        )}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={onImageClick}
+      >
+        <img
+          src={image.url}
+          alt={image.name}
+          className="w-full h-full object-cover"
+        />
+        
+        {/* Delete button */}
+        <Button
+          variant="destructive"
+          size="sm"
+          className="absolute -top-2 -right-2 w-6 h-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+        >
+          <X className="h-3 w-3" />
+        </Button>
+      </motion.div>
+    </div>
+  );
+};
+
+interface ThumbnailStripProps {
+  images: ImageFile[];
+  activeIndex: number;
+  onImageClick: (index: number) => void;
+  onImageDelete: (imageId: string) => void;
+  onImagesReorder: (images: ImageFile[]) => void;
+  onAddMore: () => void;
+  onThumbsInit: (swiper: any) => void;
+}
+
+export const ThumbnailStrip: React.FC<ThumbnailStripProps> = ({
+  images,
+  activeIndex,
+  onImageClick,
+  onImageDelete,
+  onImagesReorder,
+  onAddMore,
+  onThumbsInit
+}) => {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = images.findIndex((item) => item.id === active.id);
+      const newIndex = images.findIndex((item) => item.id === over.id);
+
+      onImagesReorder(arrayMove(images, oldIndex, newIndex));
+    }
+  };
+
+  const imageIds = images.map(img => img.id);
+
+  return (
+    <div className="space-y-4">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={imageIds} strategy={horizontalListSortingStrategy}>
+          <Swiper
+            onSwiper={onThumbsInit}
+            modules={[FreeMode, Thumbs]}
+            spaceBetween={12}
+            slidesPerView="auto"
+            freeMode={true}
+            watchSlidesProgress={true}
+            className="thumbnail-swiper"
+          >
+            {images.map((image, index) => (
+              <SwiperSlide key={image.id} className="!w-auto">
+                <SortableImage
+                  image={image}
+                  isActive={index === activeIndex}
+                  onImageClick={() => onImageClick(index)}
+                  onDelete={() => onImageDelete(image.id)}
+                />
+              </SwiperSlide>
+            ))}
+            
+            {/* Add More Button */}
+            <SwiperSlide className="!w-auto">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onAddMore}
+                  className="w-20 h-20 border-2 border-dashed border-border/50 hover:border-primary/50 bg-gallery-surface hover:bg-gallery-surface-hover transition-all duration-300"
+                >
+                  <Plus className="h-6 w-6 text-muted-foreground" />
+                </Button>
+              </motion.div>
+            </SwiperSlide>
+          </Swiper>
+        </SortableContext>
+      </DndContext>
+    </div>
+  );
+};

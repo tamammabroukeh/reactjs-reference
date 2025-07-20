@@ -1,0 +1,203 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Upload, Images } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { FileUploader } from './FileUploader';
+import { ImageGallery } from './ImageGallery';
+import { ImageFile } from '@/types/gallery';
+import { useToast } from '@/hooks/use-toast';
+
+export const ImageFlowGallery: React.FC = () => {
+  const [isUploaderOpen, setIsUploaderOpen] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [images, setImages] = useState<ImageFile[]>([]);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const handleFilesSelected = (newFiles: ImageFile[]) => {
+    const updatedImages = [...images, ...newFiles];
+    setImages(updatedImages);
+    
+    toast({
+      title: "Images uploaded successfully!",
+      description: `Added ${newFiles.length} ${newFiles.length === 1 ? 'image' : 'images'} to your gallery.`,
+    });
+
+    // Open gallery if we have images
+    if (updatedImages.length > 0) {
+      setIsGalleryOpen(true);
+    }
+  };
+
+  const handleImagesChange = (updatedImages: ImageFile[]) => {
+    setImages(updatedImages);
+  };
+
+  const handleOpenUploader = () => {
+    setIsUploaderOpen(true);
+  };
+
+  const handleAddMoreImages = () => {
+    setIsUploaderOpen(true);
+  };
+
+  // Mock API call for demonstration
+  const handleSaveToAPI = async () => {
+    try {
+      // In a real app, you would send the images to your API
+      // const formData = new FormData();
+      // images.forEach((image, index) => {
+      //   formData.append(`image_${index}`, image.file);
+      // });
+      // 
+      // const response = await fetch('/api/upload-images', {
+      //   method: 'POST',
+      //   body: formData
+      // });
+
+      toast({
+        title: "Images saved!",
+        description: `Successfully saved ${images.length} images to the server.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error saving images",
+        description: "There was a problem saving your images. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gallery-bg via-background to-gallery-bg">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-glow opacity-20" />
+        <div className="relative max-w-4xl mx-auto px-6 py-20 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8"
+          >
+            <div className="space-y-4">
+              <h1 className="text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                Image Flow Gallery Pro
+              </h1>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Professional image management with advanced cropping, aspect ratio control, and intuitive drag-and-drop organization.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button
+                size="lg"
+                onClick={handleOpenUploader}
+                className="bg-gradient-primary hover:shadow-glow transition-all duration-300 group"
+              >
+                <Upload className="h-5 w-5 mr-2 group-hover:animate-float" />
+                Upload Images
+              </Button>
+              
+              {images.length > 0 && (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => setIsGalleryOpen(true)}
+                  className="border-primary/20 hover:border-primary/50 hover:bg-primary/5"
+                >
+                  <Images className="h-5 w-5 mr-2" />
+                  View Gallery ({images.length})
+                </Button>
+              )}
+            </div>
+
+            {images.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="mt-8"
+              >
+                <Button
+                  variant="secondary"
+                  onClick={handleSaveToAPI}
+                  className="bg-accent/10 hover:bg-accent/20 border border-accent/20"
+                >
+                  Save to Server
+                </Button>
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Features Grid */}
+      <div className="max-w-6xl mx-auto px-6 py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="grid md:grid-cols-3 gap-8"
+        >
+          {[
+            {
+              icon: Upload,
+              title: "Drag & Drop Upload",
+              description: "Effortlessly upload multiple images with our intuitive drag-and-drop interface."
+            },
+            {
+              icon: Images,
+              title: "Advanced Gallery",
+              description: "Navigate through images with swiper controls and customizable thumbnail strips."
+            },
+            {
+              icon: "??",
+              title: "Professional Tools",
+              description: "Crop images manually, apply aspect ratios, and organize with drag-and-drop."
+            }
+          ].map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 + index * 0.1 }}
+              className="bg-gradient-surface p-6 rounded-xl border border-border/20 hover:border-primary/20 transition-all duration-300 group"
+            >
+              <div className="mb-4">
+                {typeof feature.icon === 'string' ? (
+                  <span className="text-3xl">{feature.icon}</span>
+                ) : (
+                  <feature.icon className="h-8 w-8 text-primary group-hover:animate-float" />
+                )}
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {feature.title}
+              </h3>
+              <p className="text-muted-foreground">
+                {feature.description}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Components */}
+      <FileUploader
+        isOpen={isUploaderOpen}
+        onClose={() => setIsUploaderOpen(false)}
+        onFilesSelected={handleFilesSelected}
+        maxFiles={50}
+      />
+
+      <ImageGallery
+        isOpen={isGalleryOpen}
+        onClose={() => setIsGalleryOpen(false)}
+        images={images}
+        onImagesChange={handleImagesChange}
+        onAddMoreImages={handleAddMoreImages}
+      />
+    </div>
+  );
+};

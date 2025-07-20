@@ -1,0 +1,7 @@
+import { ImageFlowGallery } from '@/components/gallery/ImageFlowGallery';
+
+const Index = () => {
+  return <ImageFlowGallery />;
+};
+
+export default Index;

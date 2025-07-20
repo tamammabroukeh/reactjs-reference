@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 220 25% 8%;
+    --foreground: 220 8% 95%;
+
+    --card: 220 20% 10%;
+    --card-foreground: 220 8% 95%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 220 8% 95%;
+
+    --primary: 260 100% 65%;
+    --primary-foreground: 220 25% 8%;
+    --primary-glow: 260 100% 75%;
+
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 220 8% 85%;
+
+    --muted: 220 15% 12%;
+    --muted-foreground: 220 8% 55%;
+
+    --accent: 290 100% 70%;
+    --accent-foreground: 220 25% 8%;
+
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 220 8% 95%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 15%;
+    --ring: 260 100% 65%;
+
+    --radius: 0.75rem;
+
+    /* Professional gallery colors */
+    --gallery-bg: 220 30% 6%;
+    --gallery-surface: 220 20% 12%;
+    --gallery-surface-hover: 220 20% 16%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(260 100% 65%), hsl(290 100% 70%));
+    --gradient-surface: linear-gradient(135deg, hsl(220 20% 10%), hsl(220 15% 12%));
+    --gradient-glow: linear-gradient(135deg, hsl(260 100% 65% / 0.1), hsl(290 100% 70% / 0.05));
+    
+    /* Shadows */
+    --shadow-glow: 0 0 40px hsl(260 100% 65% / 0.3);
+    --shadow-elegant: 0 20px 40px -10px hsl(220 30% 6% / 0.8);
+    --shadow-surface: 0 8px 32px hsl(220 30% 6% / 0.6);
+    
+    /* Glass effects */
+    --glass-bg: hsl(220 20% 12% / 0.8);
+    --glass-border: hsl(220 15% 20% / 0.5);
+    
+    /* Animation timing */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark mode uses same values as root for this professional theme */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Swiper Customizations */
+.swiper-button-next,
+.swiper-button-prev {
+  color: hsl(var(--primary)) !important;
+  background: hsl(var(--gallery-surface) / 0.8) !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid hsl(var(--border) / 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: hsl(var(--gallery-surface-hover) / 0.9) !important;
+  box-shadow: var(--shadow-glow) !important;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+.swiper-pagination-bullet {
+  background: hsl(var(--muted-foreground)) !important;
+  opacity: 0.5 !important;
+  transition: all 0.3s ease !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: hsl(var(--primary)) !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 10px hsl(var(--primary) / 0.5) !important;
+}
+
+.thumbnail-swiper .swiper-slide {
+  transition: all 0.3s ease !important;
+}
+
+.thumbnail-swiper .swiper-slide:hover {
+  transform: translateY(-2px) !important;
+}
+
+/* React Image Crop Customizations */
+.ReactCrop__crop-selection {
+  border: 2px solid hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 9999em rgba(0, 0, 0, 0.5) !important;
+}
+
+.ReactCrop__drag-handle {
+  background: hsl(var(--primary)) !important;
+  border: 2px solid hsl(var(--primary-foreground)) !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+
+/* Glass morphism effects */
+.backdrop-blur-glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
